@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 
 @Service
@@ -21,13 +22,25 @@ public class ResponseWrapper {
     }
 
     public void setResponseBody(int[] banks, int[] bankValues){
-        for (int i = 0; i < banks.length; i++){
-            if (banks[i] > 0) {
-                Bank bank = new Bank(BankMapper.getBankType(bankValues[i]), bankValues[i]);
-                bank.setAmount(banks[i]);
-                this.banks.add(bank);
-            }
-        }
+		/*
+		 * for (int i = 0; i < banks.length; i++){ 
+		 * if (banks[i] > 0) 
+		 * 	   { 
+		 * 		Bank bank = new
+		 *     	Bank(BankMapper.getBankType(bankValues[i]), bankValues[i]);
+		 *     	bank.setAmount(banks[i]); this.banks.add(bank); 
+		 *      } 
+		 * }
+		 */
+        
+        IntStream.range(0, banks.length)
+        .forEach(i -> {
+        	if (banks[i] > 0) {
+	        	Bank bank = new Bank(BankMapper.getBankType(bankValues[i]), bankValues[i]);
+	            bank.setAmount(banks[i]);
+	            this.banks.add(bank);
+        	}
+        });
     }
 
     public void setResponseCode(String responseCode){
