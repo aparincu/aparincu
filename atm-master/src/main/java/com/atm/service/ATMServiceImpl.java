@@ -43,6 +43,7 @@ public class ATMServiceImpl implements ATMService {
 	@Override
 	public Boolean initialiseMachine(Cash cash) {
 		Boolean success = true;
+		
 		for (Note note: cash.getMoney()) {
 			if (noteRepository.countByType(note.getType()) != 0) {
 				success = false;
