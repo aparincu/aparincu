@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 
 @Service
@@ -33,13 +35,15 @@ public class ResponseWrapper {
 		 * }
 		 */
         
-        IntStream.range(0, banks.length)
-        .forEach(i -> {
-        	if (banks[i] > 0) {
+    	ArrayList<Integer> listBanks = IntStream.of(banks)
+                .boxed().collect(Collectors.toCollection(ArrayList::new));
+    		
+    	Stream<Integer> listBanksFilter = listBanks.stream().filter(i -> (banks[i] > 0));
+    	
+    	listBanksFilter.forEach(i -> {
 	        	Bank bank = new Bank(BankMapper.getBankType(bankValues[i]), bankValues[i]);
 	            bank.setAmount(banks[i]);
 	            this.banks.add(bank);
-        	}
         });
     }
 
