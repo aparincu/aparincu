@@ -32,4 +32,9 @@ public class BankJdbcRepository {
         return jdbcTemplate.update("update bank set amount = ? where type = ?",
                 amount, bank.getType());
     }
+    
+    public int update( int amount) {
+        return jdbcTemplate.update("update bank set amount = ?",
+                amount);
+    }
 }

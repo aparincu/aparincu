@@ -29,16 +29,30 @@ public class AtmService {
         String responseStatus;
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try {
-            int[] bankAmounts = databaseManager.getBankAmount();
+            
+        	//array(20,20,20,20,20)
+        	int[] bankAmounts = databaseManager.getBankAmount();
+        	
+        	//array(1000,500,100,50,20)
             int[] bankValues = databaseManager.getBankValues();
 
+            //nu se poate scoate mai putin de 20
             BankValidator.validateAmount(amount);
+            //verifica daca suma pe care dorim sa o scoatem este mai mica decat totalul din cont
             BankValidator.validateRemainingBalance(amount, bankAmounts, bankValues);
 
+            //cauta combinatii
             List<int[]> bankList = findBanks(amount, new int[bankAmounts.length], bankAmounts, bankValues, 0);
+            
+           // String str = simpleVersion(amount, bankAmounts, bankValues);
+            
             int[] selectedBankList = BankValidator.validateRemainingNote(bankAmounts, bankList);
             int[] updatedBankList = subtractBankAmt(bankAmounts, selectedBankList);
             databaseManager.updateBalanceAmt(updatedBankList, bankValues);
+            
+            
+            
+            
             responseWrapper.setResponseBody(selectedBankList, bankValues);
             responseCode = Constant.SUCCESS_CODE;
             responseDesc = Constant.SUCCESS;
@@ -60,39 +74,65 @@ public class AtmService {
     }
 
     public ResponseEntity<ResponseWrapper> checkBalance() {
-        int[] bankAmounts = databaseManager.getBankAmount();
+        
+    	int[] bankAmounts = databaseManager.getBankAmount();
         int[] bankValues = databaseManager.getBankValues();
-
+        
+        for(int i = 0;i<bankAmounts.length;i++) {
+        	System.out.println("bankAmounts = "+bankAmounts[i]);
+        }
+        System.out.println("================================");
+        for(int i = 0;i<bankValues.length;i++) {
+        	System.out.println("bankValues = "+bankValues[i]);
+        }
+        
         ResponseWrapper responseWrapper = new ResponseWrapper();
-
         responseWrapper.setResponseBody(bankAmounts, bankValues);
         responseWrapper.setResponseCode(Constant.SUCCESS_CODE);
         responseWrapper.setResponseDesc(Constant.SUCCESS);
         responseWrapper.setResponseStatus(Constant.SUCCESS);
-
         ResponseEntity<ResponseWrapper> response = new ResponseEntity<>(responseWrapper, HttpStatus.OK);
         logger.info("Response {}", response);
         return response;
     }
 
     public List<int[]> findBanks(int amount, int[] currentBankAmt, int[] balanceBankAmt, int[] bankValues, int position){
-        List<int[]> bankCombination = new ArrayList<>();
-        int totalAmt = calCurrentTotalAmt(currentBankAmt, bankValues);
-        if (totalAmt < amount) {
-            for (int i = position; i < currentBankAmt.length; i++) {
-                if (balanceBankAmt[i] > currentBankAmt[i]) {
-                    int newCurrentBankAmt[] = currentBankAmt.clone();
-                    newCurrentBankAmt[i]++;
-                    List<int[]> resultList = findBanks(amount, newCurrentBankAmt, balanceBankAmt, bankValues, i);
-                    if (resultList!=null) {
-                        bankCombination.addAll(resultList);
-                    }
-                }
-            }
-        } else if (totalAmt == amount){
-            bankCombination.add(currentBankAmt);
-        }
-        return bankCombination;
+		
+		List<int[]> bankCombination = new ArrayList<>();
+
+		int totalAmt = calCurrentTotalAmt(currentBankAmt, bankValues);
+		if (totalAmt < amount) {
+			for (int i = position; i < currentBankAmt.length; i++) {
+				if (balanceBankAmt[i] > currentBankAmt[i]) {
+					int newCurrentBankAmt[] = currentBankAmt.clone();
+					newCurrentBankAmt[i]++;
+					List<int[]> resultList = findBanks(amount, newCurrentBankAmt, balanceBankAmt, bankValues, i);
+					if (resultList != null) {
+						bankCombination.addAll(resultList);
+					}
+				}
+			}
+		} else if (totalAmt == amount) {
+			bankCombination.add(currentBankAmt);
+		}
+		return bankCombination;
+		  	
+    }
+    
+    
+    public String simpleVersion(int amount, int[] currentBankAmt,int[] bankValues) {
+    	for(int i = 0;i<currentBankAmt.length;i++) {
+			if(amount % bankValues[i] ==0) {
+				int k = amount/bankValues[i];
+				currentBankAmt[i] = currentBankAmt[i]-k;
+				System.out.println("currentBankAmt[i] = "+currentBankAmt[i]);
+				databaseManager.updateBalanceAmt(currentBankAmt[i]);	
+			}
+			break;
+		}	
+    	
+	String s = "Withdrow = "+ amount;
+	return s;
     }
 
     public int[] subtractBankAmt(int[] balanceBanks, int[] banks){

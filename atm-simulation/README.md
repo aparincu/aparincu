@@ -31,6 +31,7 @@ The project should start on port 8080
 
 You can request dispensing money via [Postman](https://www.getpostman.com) or by opening the following URL in a browser
 ```
+POST
 http://localhost:8080/atm-simulator/withdraw?amount=<AMOUNT>
 ```
 while \<AMOUNT\> indicates money you want to dispense from ATM Simulator
