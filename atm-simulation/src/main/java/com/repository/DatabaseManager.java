@@ -26,16 +26,18 @@ public class DatabaseManager {
 
          bankValues = new int[banks.size()];
          int bankAmount[] = new int[banks.size()];
-		 for (int i = 0; i< banks.size(); i++) { 
-		     bankAmount[i] = banks.get(i).getAmount();
-		     bankValues[i] = banks.get(i).getValue(); 		     
-		  }
-
-		 
+       
 		/*
-		 * IntStream.range(0, banks.size()) .forEach(i -> { bankAmount[i] =
-		 * banks.get(i).getAmount(); bankValues[i] = banks.get(i).getValue(); });
+		 * for (int i = 0; i< banks.size(); i++) { bankAmount[i] =
+		 * banks.get(i).getAmount(); bankValues[i] = banks.get(i).getValue(); }
 		 */
+		 
+		
+		IntStream.range(0, banks.size()).forEach(i -> {
+			bankAmount[i] = banks.get(i).getAmount();
+			bankValues[i] = banks.get(i).getValue();
+		});
+		 
         
         logger.info("Got data from database : {}", banks);
         return bankAmount;
@@ -53,9 +55,5 @@ public class DatabaseManager {
         }
     }
     
-    public void updateBalanceAmt(int currentBankAmt){
-     
-    	bankJdbcRepository.update(currentBankAmt);
-        
-    }
+ 
 }

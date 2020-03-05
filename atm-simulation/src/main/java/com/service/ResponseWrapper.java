@@ -10,78 +10,79 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-
 @Service
 public class ResponseWrapper {
 
-    private List<Bank> banks;
-    private String responseCode;
-    private String responseDesc;
-    private String responseStatus;
+	private List<Bank> banks;
+	private String responseCode;
+	private String responseDesc;
+	private String responseStatus;
 
-    public ResponseWrapper(){
-        this.banks = new ArrayList<>();
-    }
+	public ResponseWrapper() {
+		this.banks = new ArrayList<>();
+	}
 
-    public void setResponseBody(int[] banks, int[] bankValues){
+	public void setResponseBody(int[] banks, int[] bankValues) {
+		
+		
+		for (int i = 0; i < banks.length; i++) {
+			if (banks[i] > 0) {
+				Bank bank = new Bank(BankMapper.getBankType(bankValues[i]), bankValues[i]);
+				bank.setAmount(banks[i]);
+				this.banks.add(bank);
+			}
+		}
+		 
+		  
+		 
+		
+		//with stream
+		
 		/*
-		 * for (int i = 0; i < banks.length; i++){ 
-		 * if (banks[i] > 0) 
-		 * 	   { 
-		 * 		Bank bank = new
-		 *     	Bank(BankMapper.getBankType(bankValues[i]), bankValues[i]);
-		 *     	bank.setAmount(banks[i]); this.banks.add(bank); 
-		 *      } 
-		 * }
+		 * List<Integer> listBanks =
+		 * IntStream.of(banks).boxed().collect(Collectors.toCollection(ArrayList::new));
+		 * 
+		 * Stream<Integer> listBanksFilter = listBanks.stream().filter(i ->
+		 * (listBanks.get(i)>0)); listBanksFilter.forEach(i -> { Bank bank = new
+		 * Bank(BankMapper.getBankType(bankValues[i]), bankValues[i]);
+		 * bank.setAmount(banks[i]); this.banks.add(bank); });
 		 */
-        
-    	ArrayList<Integer> listBanks = IntStream.of(banks)
-                .boxed().collect(Collectors.toCollection(ArrayList::new));
-    		
-    	Stream<Integer> listBanksFilter = listBanks.stream().filter(i -> (banks[i] > 0));
-    	
-    	listBanksFilter.forEach(i -> {
-	        	Bank bank = new Bank(BankMapper.getBankType(bankValues[i]), bankValues[i]);
-	            bank.setAmount(banks[i]);
-	            this.banks.add(bank);
-        });
-    }
+		 
+		 
+		 
+	}
 
-    public void setResponseCode(String responseCode){
-        this.responseCode = responseCode;
-    }
+	public void setResponseCode(String responseCode) {
+		this.responseCode = responseCode;
+	}
 
-    public void setResponseDesc(String responseDesc){
-        this.responseDesc = responseDesc;
-    }
+	public void setResponseDesc(String responseDesc) {
+		this.responseDesc = responseDesc;
+	}
 
-    public void setResponseStatus(String responseStatus){
-        this.responseStatus = responseStatus;
-    }
+	public void setResponseStatus(String responseStatus) {
+		this.responseStatus = responseStatus;
+	}
 
-    public List<Bank> getResponseBody(){
-        return banks;
-    }
+	public List<Bank> getResponseBody() {
+		return banks;
+	}
 
-    public String getResponseCode(){
-        return responseCode;
-    }
+	public String getResponseCode() {
+		return responseCode;
+	}
 
-    public String getResponseDesc(){
-        return responseDesc;
-    }
+	public String getResponseDesc() {
+		return responseDesc;
+	}
 
-    public String getResponseStatus(){
-        return responseStatus;
-    }
+	public String getResponseStatus() {
+		return responseStatus;
+	}
 
-    @Override
-    public String toString(){
-        return "ResponseWrapper:{" +
-                " resultCode=" + getResponseCode() +
-                " resultStatus=" + getResponseStatus() +
-                " resultDesc=" + getResponseDesc() +
-                " resultBody=" + getResponseBody() +
-                " }";
-    }
+	@Override
+	public String toString() {
+		return "ResponseWrapper:{" + " resultCode=" + getResponseCode() + " resultStatus=" + getResponseStatus()
+				+ " resultDesc=" + getResponseDesc() + " resultBody=" + getResponseBody() + " }";
+	}
 }

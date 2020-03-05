@@ -29,6 +29,7 @@ public class AtmController {
 
     @GetMapping("/checkBalance")
     public ResponseEntity<ResponseWrapper> checkBalance() {
+    	System.out.println("intra check");
         return atmService.checkBalance();
     }
 
